@@ -1,1003 +1,559 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>محاضرة 1: أول خطوة في عالم Python</title>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Fira+Code:wght@400;500&display=swap');
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Cairo', sans-serif;
-        background: linear-gradient(135deg, #dce8dd 0%, #c9dce8 100%);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    /* شريط التقدم العلوي */
-    .progress-container {
-        width: 100%;
-        height: 6px;
-        background: rgba(107, 144, 128, 0.2);
-        position: fixed;
-        top: 0;
-        z-index: 100;
-    }
-
-    .progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, #7fa896, #a8c5d6);
-        transition: width 0.4s ease;
-    }
-
-    /* حاوية السلايد الرئيسية */
-    .slide-wrapper {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        position: relative;
-    }
-
-    .slide {
-        display: none;
-        width: 100%;
-        max-width: 950px;
-        background: #f3ede3;
-        border-radius: 24px;
-        padding: 45px 55px;
-        box-shadow: 0 20px 55px rgba(90, 80, 60, 0.25);
-        animation: slideIn 0.5s ease-out;
-        max-height: 85vh;
-        overflow-y: auto;
-        border: 1px solid #ddd2bd;
-    }
-
-    .slide.active {
-        display: block;
-    }
-
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===== Title Slide ===== */
-    .title-slide {
-        text-align: center;
-        background: linear-gradient(135deg, #7fa896 0%, #5d8a76 100%);
-        color: #f3ede3;
-    }
-
-    .python-logo {
-        font-size: 75px;
-        margin-bottom: 20px;
-        animation: bounce 2s infinite;
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-12px); }
-    }
-
-    .title-slide h1 {
-        font-size: 38px;
-        font-weight: 900;
-        margin-bottom: 15px;
-    }
-
-    .title-slide .subtitle {
-        font-size: 20px;
-        opacity: 0.95;
-        margin-bottom: 25px;
-        font-weight: 400;
-    }
-
-    .badge-row {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 25px;
-    }
-
-    .badge {
-        background: rgba(243, 237, 227, 0.2);
-        padding: 10px 20px;
-        border-radius: 50px;
-        font-size: 14px;
-        font-weight: 600;
-        border: 1px solid rgba(243, 237, 227, 0.35);
-    }
-
-    /* ===== Common Slide Elements ===== */
-    .slide-header {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 3px solid #a8c5d6;
-    }
-
-    .slide-icon {
-        font-size: 34px;
-        background: linear-gradient(135deg, #a8c5d6, #b8d4c8);
-        width: 58px;
-        height: 58px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .slide-header h2 {
-        font-size: 26px;
-        color: #5c5142;
-        font-weight: 700;
-    }
-
-    .slide-header .slide-num {
-        margin-right: auto;
-        background: #e3dccb;
-        color: #8a7f6a;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    /* ===== Content Styles ===== */
-    .content-text {
-        font-size: 16px;
-        line-height: 1.9;
-        color: #5c5142;
-        margin-bottom: 15px;
-    }
-
-    .highlight-box {
-        background: #e8dfc8;
-        border-right: 5px solid #c4a574;
-        padding: 16px 22px;
-        border-radius: 12px;
-        margin: 20px 0;
-        font-size: 15px;
-        color: #6b5637;
-        font-weight: 600;
-    }
-
-    .info-box {
-        background: #d7e8e2;
-        border-right: 5px solid #7fa896;
-        padding: 16px 22px;
-        border-radius: 12px;
-        margin: 15px 0;
-        color: #3f5e4f;
-        font-size: 15px;
-    }
-
-    /* ===== Grid Cards ===== */
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 14px;
-        margin: 20px 0;
-    }
-
-    .info-card {
-        background: #ece4d6;
-        border: 2px solid #ddd2bd;
-        border-radius: 14px;
-        padding: 18px;
-        text-align: center;
-        transition: all 0.3s;
-    }
-
-    .info-card:hover {
-        border-color: #a8c5d6;
-        transform: translateY(-4px);
-    }
-
-    .info-card .icon {
-        font-size: 32px;
-        margin-bottom: 8px;
-    }
-
-    .info-card h4 {
-        color: #5c5142;
-        font-size: 15px;
-        margin-bottom: 6px;
-    }
-
-    .info-card p {
-        color: #8a7f6a;
-        font-size: 12px;
-        line-height: 1.5;
-    }
-
-    /* ===== Realistic Code Editor Block ===== */
-    .code-block {
-        background: #3d3428;
-        border-radius: 12px;
-        overflow: hidden;
-        margin: 18px 0;
-        box-shadow: 0 8px 20px rgba(61, 52, 40, 0.3);
-    }
-
-    .code-header {
-        background: #4a4033;
-        padding: 10px 18px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .dot { width: 11px; height: 11px; border-radius: 50%; }
-    .dot.red { background: #c98a7b; }
-    .dot.yellow { background: #d4b483; }
-    .dot.green { background: #9cb896; }
-
-    .code-filename {
-        color: #a89c85;
-        font-size: 12px;
-        margin-right: auto;
-        font-family: 'Fira Code', monospace;
-    }
-
-    .code-content {
-        padding: 8px 0;
-        font-family: 'Fira Code', monospace;
-        font-size: 14px;
-        overflow-x: auto;
-        direction: ltr;
-        text-align: left;
-    }
-
-    .code-line {
-        display: flex;
-        padding: 5px 20px;
-        white-space: pre;
-    }
-
-    .code-line:hover {
-        background: rgba(255,255,255,0.03);
-    }
-
-    .line-num {
-        color: #6b6152;
-        min-width: 28px;
-        text-align: right;
-        margin-left: 18px;
-        user-select: none;
-        font-size: 12px;
-    }
-
-    .line-code {
-        color: #e0d8c8;
-    }
-
-    .comment { color: #7a9985; }
-    .keyword { color: #c9a7d4; }
-    .string { color: #d4b483; }
-    .func { color: #a8c5d6; }
-    .num { color: #9cb896; }
-    .var { color: #b8cfe0; }
-
-    /* ===== Table Styles ===== */
-    .styled-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(90, 80, 60, 0.1);
-    }
-
-    .styled-table th {
-        background: #7fa896;
-        color: #f3ede3;
-        padding: 13px;
-        font-size: 14px;
-        font-weight: 600;
-    }
-
-    .styled-table td {
-        padding: 12px 14px;
-        border-bottom: 1px solid #ddd2bd;
-        font-size: 14px;
-        color: #5c5142;
-        background: #ece4d6;
-    }
-
-    .styled-table tr:nth-child(even) td {
-        background: #e3dccb;
-    }
-
-    .type-tag {
-        display: inline-block;
-        padding: 3px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #f3ede3;
-    }
-
-    .tag-str { background: #7fa896; }
-    .tag-int { background: #8ab0c4; }
-    .tag-float { background: #c4a574; }
-    .tag-bool { background: #b08a7a; }
-
-    /* ===== Timeline for Agenda ===== */
-    .timeline-item {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 14px 0;
-        border-bottom: 1px dashed #ddd2bd;
-    }
-
-    .timeline-item:last-child {
-        border-bottom: none;
-    }
-
-    .time-badge {
-        background: linear-gradient(135deg, #a8c5d6, #b8d4c8);
-        color: #3f4f4a;
-        padding: 8px 14px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 12px;
-        min-width: 95px;
-        text-align: center;
-    }
-
-    .timeline-content h4 {
-        color: #5c5142;
-        font-size: 15px;
-        margin-bottom: 3px;
-    }
-
-    .timeline-content span {
-        color: #8a7f6a;
-        font-size: 12px;
-    }
-
-    /* ===== Objectives List ===== */
-    .objectives-list {
-        list-style: none;
-        margin: 20px 0;
-    }
-
-    .objectives-list li {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 11px 0;
-        font-size: 15px;
-        color: #5c5142;
-    }
-
-    .check-icon {
-        background: #7fa896;
-        color: #f3ede3;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        flex-shrink: 0;
-        margin-top: 2px;
-    }
-
-    /* ===== Terminal Style ===== */
-    .terminal {
-        background: #33352e;
-        border-radius: 10px;
-        padding: 14px 20px;
-        font-family: 'Fira Code', monospace;
-        color: #9cb896;
-        font-size: 13px;
-        margin: 15px 0;
-        direction: ltr;
-        text-align: left;
-        line-height: 1.8;
-    }
-
-    .terminal::before {
-        content: "$ ";
-        color: #6b6152;
-    }
-
-    /* ===== Practice Box ===== */
-    .practice-box {
-        background: #d7e8e2;
-        border: 2px dashed #7fa896;
-        border-radius: 14px;
-        padding: 18px 20px;
-        margin: 20px 0;
-    }
-
-    .practice-box .practice-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #3f5e4f;
-        font-weight: 700;
-        font-size: 15px;
-        margin-bottom: 8px;
-    }
-
-    /* ===== Navigation ===== */
-    .nav-controls {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
-        background: rgba(93, 138, 118, 0.9);
-    }
-
-    .nav-btn {
-        background: #f3ede3;
-        color: #5d8a76;
-        border: none;
-        padding: 11px 26px;
-        border-radius: 50px;
-        font-family: 'Cairo', sans-serif;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-
-    .nav-btn:hover {
-        transform: scale(1.05);
-    }
-
-    .nav-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        transform: scale(1);
-    }
-
-    .slide-counter {
-        color: #f3ede3;
-        font-weight: 700;
-        font-size: 15px;
-        background: rgba(243, 237, 227, 0.15);
-        padding: 9px 18px;
-        border-radius: 50px;
-    }
-
-    /* ===== Two Column Layout ===== */
-    .two-col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-        margin: 15px 0;
-    }
-
-    @media (max-width: 700px) {
-        .two-col { grid-template-columns: 1fr; }
-        .slide { padding: 25px; }
-        .title-slide h1 { font-size: 26px; }
-    }
-
-    /* Homework slide */
-    .homework-item {
-        background: #ece4d6;
-        border-right: 5px solid #a889c4;
-        padding: 15px 20px;
-        border-radius: 12px;
-        margin-bottom: 12px;
-    }
-
-    .homework-item .hw-number {
-        color: #8a6da3;
-        font-weight: 900;
-        font-size: 13px;
-    }
-
-    .slide::-webkit-scrollbar {
-        width: 8px;
-    }
-    .slide::-webkit-scrollbar-thumb {
-        background: #ddd2bd;
-        border-radius: 10px;
-    }
-
-    .keyboard-hint {
-        position: fixed;
-        bottom: 88px;
-        left: 20px;
-        background: rgba(93, 138, 118, 0.85);
-        color: #f3ede3;
-        padding: 7px 15px;
-        border-radius: 20px;
-        font-size: 11px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحاضرة الأولى — Python | Sunshine T Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --python-blue: #306998;
+            --python-yellow: #FFD43B;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-light: #f8f9fa;
+            --bg-dark: #1a1a2e;
+            --code-bg: #282c34;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --success: #4CAF50;
+            --warning: #FFD43B;
+            --error: #F44336;
+            --info: #2196F3;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 40px 20px 30px;
+            text-align: center;
+            border-bottom: 5px solid var(--python-yellow);
+        }
+        .brand { font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; }
+        header h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 15px; }
+        header .subtitle { font-size: 1.2rem; margin-bottom: 25px; opacity: 0.95; }
+        
+        .info-bar {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+        }
+        .info-bar span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* Main Container */
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 30px 20px;
+            padding-bottom: 100px;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+            border-right: 5px solid var(--python-yellow);
+        }
+        .toc h2 {
+            color: var(--python-blue);
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+        }
+        .toc ol {
+            padding-right: 25px;
+            counter-reset: item;
+        }
+        .toc li {
+            margin: 12px 0;
+            padding: 10px 15px;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+        }
+        .toc li:hover {
+            background: #e8f0fe;
+            transform: translateX(-5px);
+        }
+        .toc a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .toc .time {
+            color: var(--info);
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        /* Sections */
+        section {
+            background: white;
+            padding: 35px;
+            margin-bottom: 30px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px dashed var(--python-yellow);
+        }
+        .section-num {
+            background: var(--python-blue);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--python-blue);
+            flex: 1;
+        }
+        .section-time {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--python-blue);
+            margin: 25px 0 15px;
+            font-size: 1.4rem;
+        }
+        p { margin-bottom: 15px; font-size: 1.05rem; }
+        ul, ol { 
+            padding-right: 25px; 
+            margin-bottom: 20px;
+        }
+        li { margin-bottom: 10px; font-size: 1.05rem; }
+
+        /* Code Blocks */
+        .code-block {
+            background: var(--code-bg);
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            font-family: 'Fira Code', monospace;
+            direction: ltr;
+            text-align: left;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-left: 5px solid var(--python-yellow);
+            box-shadow: var(--shadow-sm);
+        }
+        .code-keyword { color: #c678dd; font-weight: 600; }
+        .code-string { color: #98c379; }
+        .code-comment { color: #5c6370; font-style: italic; }
+        .code-func { color: #61afef; }
+        .code-number { color: #d19a66; }
+        .code-text {
+            font-family: 'Fira Code', monospace;
+            background: rgba(255,212,59,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        /* Tables */
+        .table-wrap { 
+            overflow-x: auto; 
+            margin: 20px 0; 
+        }
+        table {
+            width: 100%; 
+            border-collapse: collapse;
+            background: white; 
+            border-radius: var(--radius-md); 
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        th {
+            background: var(--python-blue); 
+            color: white;
+            padding: 15px 20px; 
+            text-align: right; 
+            font-weight: 700; 
+            font-size: 1.1rem;
+        }
+        td {
+            padding: 15px 20px; 
+            border-bottom: 1px solid #eee;
+            font-family: 'Tajawal', sans-serif; 
+            font-size: 1.05rem;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8f9fa; }
+
+        /* Info Boxes */
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-right: 5px solid var(--info);
+            padding: 25px; 
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            border-right: 5px solid var(--warning);
+            padding: 25px; 
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+        }
+        .success-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-right: 5px solid var(--success);
+            padding: 25px; 
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+        }
+        .highlight-box {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            margin: 25px 0;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-dark); 
+            color: var(--text-light);
+            text-align: center; 
+            padding: 40px 20px; 
+            margin-top: 50px;
+        }
+        footer .brand { 
+            font-weight: 900; 
+            font-size: 1.4rem; 
+            margin-bottom: 15px; 
+            color: white; 
+        }
+        footer a { 
+            color: var(--python-yellow); 
+            text-decoration: none; 
+        }
+        footer p { 
+            margin: 8px 0; 
+            opacity: 0.85; 
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.6rem; }
+            header .subtitle { font-size: 1rem; }
+            .info-bar { gap: 15px; }
+            section { padding: 25px 20px; }
+            .section-title { font-size: 1.4rem; }
+            table { font-size: 0.95rem; }
+            th, td { padding: 12px 15px; }
+            .toc { padding: 20px; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="progress-container">
-    <div class="progress-bar" id="progressBar"></div>
-</div>
+    <header>
+        <div class="brand">Sunshine T Academy</div>
+        <h1>🐍 المحاضرة الأولى — مقدمة في لغة Python</h1>
+        <div class="subtitle">من الصفر للاحتراف</div>
+        <div class="info-bar">
+            <span><i class="fa-regular fa-clock"></i> المدة: 60 دقيقة بالضبط</span>
+            <span><i class="fa-solid fa-user-graduate"></i> المستوى: مبتدئ</span>
+            <span><i class="fa-solid fa-chalkboard-user"></i> المدرب: م. أحمد</span>
+        </div>
+    </header>
 
-<div class="slide-wrapper">
+    <div class="container">
+        
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>📋 جدول المحتويات</h2>
+            <ol>
+                <li><a href="#section0">الافتتاح وجدول المحاضرة</a> <span class="time">⏱ 5 دقايق</span></li>
+                <li><a href="#section1">ما هي البرمجة؟ ولماذا نتعلمها؟</a> <span class="time">⏱ 8 دقايق</span></li>
+                <li><a href="#section2">لماذا Python بالتحديد؟</a> <span class="time">⏱ 7 دقايق</span></li>
+                <li><a href="#section3">كيف يفهم الكمبيوتر؟ (Binary & Compiler)</a> <span class="time">⏱ 10 دقايق</span></li>
+                <li><a href="#section4">☕ استراحة تفاعلية + مراجعة سريعة</a> <span class="time"> 5 دقايق</span></li>
+                <li><a href="#section5">امتداد الملفات + أول أمر print()</a> <span class="time">⏱ 12 دقيقة</span></li>
+                <li><a href="#section6">مكونات أمر print() + ملاحظات تشغيل</a> <span class="time"> 8 دقايق</span></li>
+                <li><a href="#section7">الواجب + مصطلحات المحاضرة + الختام</a> <span class="time">⏱ 5 دقايق</span></li>
+            </ol>
+        </div>
 
-    <!-- SLIDE 1: Title -->
-    <div class="slide title-slide active">
-        <div class="python-logo">🐍</div>
-        <h1>كورس Python الاحترافي</h1>
-        <p class="subtitle">المحاضرة الأولى: أول خطوة في عالم Python</p>
-        <p style="opacity: 0.85; font-size: 14px;">من الصفر إلى أول برنامج حقيقي</p>
-        <div class="badge-row">
-            <span class="badge">⏱️ 60 دقيقة</span>
-            <span class="badge">🎯 المستوى: مبتدئ</span>
-            <span class="badge">👥 +18 سنة</span>
-            <span class="badge">📚 محاضرة 1 من 20</span>
-        </div>
-    </div>
-
-    <!-- SLIDE 2: Agenda -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">🗓️</div>
-            <h2>أجندة المحاضرة</h2>
-            <span class="slide-num">2 / 14</span>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">7 دقائق</span>
-            <div class="timeline-content">
-                <h4>مقدمة تحفيزية</h4>
-                <span>لماذا Python هي الاختيار الأفضل؟</span>
+        <!-- Section 0: Cover & Agenda -->
+        <section id="section0">
+            <div class="section-header">
+                <div class="section-num">٠</div>
+                <div class="section-title">الافتتاح وجدول المحاضرة</div>
+                <div class="section-time">⏱ 5 دقايق</div>
             </div>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">8 دقائق</span>
-            <div class="timeline-content">
-                <h4>تثبيت بيئة العمل</h4>
-                <span>Python + VS Code</span>
+            <div class="highlight-box">
+                <p style="font-size: 1.15rem; margin: 0;">أهلاً بكم في المحاضرة التأسيسية. خلال هذه الساعة، سننتقل من <strong>الصفر إلى كتابة أول سطر كود فعلي</strong>، مع فهم كيف يفكر الكمبيوتر ولماذا نختار Python بالتحديد.</p>
             </div>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">7 دقائق</span>
-            <div class="timeline-content">
-                <h4>أول برنامج Python</h4>
-                <span>Hello World وفهم التعليقات</span>
-            </div>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">13 دقيقة</span>
-            <div class="timeline-content">
-                <h4>المتغيرات وأنواع البيانات</h4>
-                <span>String, Integer, Float, Boolean</span>
-            </div>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">10 دقائق</span>
-            <div class="timeline-content">
-                <h4>دالة print() الاحترافية</h4>
-                <span>f-strings والتنسيق المتقدم</span>
-            </div>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">10 دقائق</span>
-            <div class="timeline-content">
-                <h4>مشروع تطبيقي</h4>
-                <span>بناء بطاقة تعريف شخصية</span>
-            </div>
-        </div>
-        <div class="timeline-item">
-            <span class="time-badge">5 دقائق</span>
-            <div class="timeline-content">
-                <h4>تلخيص وواجب</h4>
-                <span>مراجعة + تحضير للمحاضرة القادمة</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 3: Objectives -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">🎯</div>
-            <h2>الأهداف التعليمية</h2>
-            <span class="slide-num">3 / 14</span>
-        </div>
-        <p class="content-text">بنهاية هذه المحاضرة، ستكون قادراً على:</p>
-        <ul class="objectives-list">
-            <li><span class="check-icon">✓</span> فهم ماهية Python ولماذا هي الأقوى في 2024</li>
-            <li><span class="check-icon">✓</span> تثبيت Python وبيئة التطوير VS Code بنفسك</li>
-            <li><span class="check-icon">✓</span> كتابة وتشغيل أول برنامج Python حقيقي</li>
-            <li><span class="check-icon">✓</span> فهم المتغيرات وأنواع البيانات الأساسية الأربعة</li>
-            <li><span class="check-icon">✓</span> استخدام دالة print() باحترافية مع f-strings</li>
-            <li><span class="check-icon">✓</span> بناء مشروع متكامل: بطاقة تعريف شخصية</li>
-        </ul>
-    </div>
-
-    <!-- SLIDE 4: Why Python -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">🚀</div>
-            <h2>لماذا Python؟</h2>
-            <span class="slide-num">4 / 14</span>
-        </div>
-        <div class="highlight-box">
-            💡 Python هي اللغة الأكثر طلباً في سوق العمل لعام 2024
-        </div>
-        <div class="cards-grid">
-            <div class="info-card">
-                <div class="icon">🔍</div>
-                <h4>Google</h4>
-                <p>تستخدمها في محرك البحث والخدمات الأساسية</p>
-            </div>
-            <div class="info-card">
-                <div class="icon">📸</div>
-                <h4>Instagram</h4>
-                <p>البنية التحتية بالكامل مبنية على Python</p>
-            </div>
-            <div class="info-card">
-                <div class="icon">🎬</div>
-                <h4>Netflix</h4>
-                <p>تحليل البيانات وأنظمة التوصية</p>
-            </div>
-            <div class="info-card">
-                <div class="icon">🚀</div>
-                <h4>NASA</h4>
-                <p>تحليل بيانات الفضاء والأبحاث العلمية</p>
-            </div>
-            <div class="info-card">
-                <div class="icon">🤖</div>
-                <h4>OpenAI</h4>
-                <p>لغة الذكاء الاصطناعي الأولى عالمياً</p>
-            </div>
-            <div class="info-card">
-                <div class="icon">💰</div>
-                <h4>سوق العمل</h4>
-                <p>من أعلى اللغات أجراً للمبتدئين والمحترفين</p>
-            </div>
-        </div>
-        <div class="info-box">
-            🗣️ <strong>سؤال تفاعلي:</strong> ما هو الشيء الذي تتمنى أتمتته في حياتك اليومية؟
-        </div>
-    </div>
-
-    <!-- SLIDE 5: Installation -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">⚙️</div>
-            <h2>تثبيت بيئة العمل</h2>
-            <span class="slide-num">5 / 14</span>
-        </div>
-        <ul class="objectives-list">
-            <li><span class="check-icon">1</span> الذهاب إلى الموقع الرسمي: <strong>python.org</strong></li>
-            <li><span class="check-icon">2</span> تحميل أحدث إصدار (Python 3.12+)</li>
-            <li><span class="check-icon">3</span> ⚠️ تفعيل خيار "Add Python to PATH" أثناء التثبيت</li>
-            <li><span class="check-icon">4</span> تحميل VS Code من: <strong>code.visualstudio.com</strong></li>
-            <li><span class="check-icon">5</span> تثبيت إضافة Python Extension داخل VS Code</li>
-        </ul>
-        <p class="content-text" style="margin-top:15px;"><strong>للتأكد من نجاح التثبيت، افتح Terminal واكتب:</strong></p>
-        <div class="terminal">python --version</div>
-        <div class="highlight-box">
-            ⚠️ تنبيه: هذه أكثر نقطة يواجه فيها المبتدئون مشاكل - خذ وقتك هنا ولا تستعجل!
-        </div>
-    </div>
-
-    <!-- SLIDE 6: First Program -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">💻</div>
-            <h2>أول برنامج Python</h2>
-            <span class="slide-num">6 / 14</span>
-        </div>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="code-filename">hello.py</span>
-            </div>
-            <div class="code-content">
-                <div class="code-line"><span class="line-num">1</span><span class="line-code comment"># هذا أول برنامج لي في Python!</span></div>
-                <div class="code-line"><span class="line-num">2</span><span class="line-code"><span class="func">print</span>(<span class="string">"مرحباً بالعالم!"</span>)</span></div>
-                <div class="code-line"><span class="line-num">3</span><span class="line-code"><span class="func">print</span>(<span class="string">"اسمي محمد وأتعلم البرمجة"</span>)</span></div>
-            </div>
-        </div>
-        <div class="two-col">
+            
+            <h3> جدول المحاضرة (60 دقيقة)</h3>
+            <ul>
+                <li><strong>١</strong> — ما هي البرمجة؟ ولماذا نتعلمها؟ <span style="color: var(--info);">(8 دقائق)</span></li>
+                <li><strong>٢</strong> — لماذا Python بالتحديد؟ <span style="color: var(--info);">(7 دقائق)</span></li>
+                <li><strong>٣</strong> — كيف يفهم الكمبيوتر؟ (Binary & Compiler) <span style="color: var(--info);">(10 دقائق)</span></li>
+                <li><strong>☕</strong> — استراحة تفاعلية + مراجعة سريعة <span style="color: var(--info);">(5 دقائق)</span></li>
+                <li><strong>٠٤</strong> — امتداد الملفات (.py) + أول أمر <code class="code-text">print()</code> <span style="color: var(--info);">(12 دقائق)</span></li>
+                <li><strong>٠</strong> — مكونات الأمر + ملاحظات تشغيل <span style="color: var(--info);">(8 دقائق)</span></li>
+                <li><strong>٠</strong> — الواجب + مصطلحات المحاضرة + الختام <span style="color: var(--info);">(5 دقائق)</span></li>
+            </ul>
             <div class="info-box">
-                <strong># </strong> تعني تعليق (Comment) - لا يُنفذ كجزء من الكود
+                💡 <strong>نصيحة المحاضر:</strong> هذه المحاضرة تمهيدية لكن جوهرية. كل قاعدة سنشرحها اليوم ستعود لها في المحاضرات القادمة. راجع المصطلحات في النهاية بدقة.
+            </div>
+        </section>
+
+        <!-- Section 1: What is Programming? -->
+        <section id="section1">
+            <div class="section-header">
+                <div class="section-num">١</div>
+                <div class="section-title">ما هي البرمجة؟ ولماذا نتعلمها؟</div>
+                <div class="section-time">⏱ 8 دقايق</div>
+            </div>
+            <p><strong>لغة البرمجة</strong> هي وسيلة التواصل بين الإنسان والكمبيوتر. نستخدمها لكتابة أوامر وتعليمات دقيقة تجعل الجهاز ينفذ المهام المطلوبة تلقائياً.</p>
+            
+            <h3>✔️ لماذا نتعلم البرمجة؟</h3>
+            <ul>
+                <li><strong>حل المشكلات:</strong> تحويل التحديات المعقدة إلى خطوات منطقية قابلة للتنفيذ.</li>
+                <li><strong>بناء البرامج والتطبيقات:</strong> من مواقع الويب إلى تطبيقات الموبايل والذكاء الاصطناعي.</li>
+                <li><strong>توفير الوقت والجهد:</strong> أتمتة المهام المتكررة التي كانت تستغرق ساعات.</li>
+                <li><strong>تنفيذ العمليات الحسابية:</strong> سرعة ودقة لا يمكن تحقيقها يدوياً.</li>
+                <li><strong>التحكم في الأنظمة:</strong> الروبوتات، الأجهزة الذكية، الخوادم، وقواعد البيانات.</li>
+            </ul>
+            <div class="warning-box">
+                ⚠️ <strong>ملاحظة:</strong> البرمجة ليست حفظ أوامر، بل هي <strong>تفكير منهجي</strong>. الكمبيوتر ينفذ حرفياً ما تطلبه، والدقة هنا هي الفرق بين النجاح والخطأ.
+            </div>
+        </section>
+
+        <!-- Section 2: Why Python? -->
+        <section id="section2">
+            <div class="section-header">
+                <div class="section-num">٠٢</div>
+                <div class="section-title">لماذا Python بالتحديد؟</div>
+                <div class="section-time">⏱ 7 دقايق</div>
+            </div>
+            <p>من بين مئات لغات البرمجة، اخترنا Python للأسباب العملية التالية:</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>الميزة</th><th>الشرح العملي</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>📖 سهلة القراءة</td><td>تركيبتها قريبة من اللغة الإنجليزية، مما يقلل منحنى التعلم.</td></tr>
+                        <tr><td>🛠️ متعددة الاستخدامات</td><td>تُستخدم في الويب، البيانات، الذكاء الاصطناعي، الأتمتة، والتطبيقات.</td></tr>
+                        <tr><td>🌍 مجتمع ضخم</td><td>ملايين المبرمجين، مكتبات جاهزة، ودعم فني مستمر.</td></tr>
+                        <tr><td>🏢 طلب سوقي عالي</td><td>من أكثر اللغات المطلوبة في الوظائف التقنية عالمياً.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="success-box">
+                ✅ <strong>الخلاصة:</strong> Python ليست الأسهل فحسب، بل هي الأقوى من حيث التوازن بين البساطة والاحترافية.
+            </div>
+        </section>
+
+        <!-- Section 3: Binary & Compiler -->
+        <section id="section3">
+            <div class="section-header">
+                <div class="section-num"></div>
+                <div class="section-title">كيف يفهم الكمبيوتر؟ (Binary & Compiler)</div>
+                <div class="section-time">⏱ 10 دقايق</div>
+            </div>
+            <p>الكمبيوتر لا يفهم العربية أو الإنجليزية أو حتى Python. هو يفهم لغة واحدة فقط:</p>
+            
+            <h3>⚡ Binary Language (لغة الآلة)</h3>
+            <p>تتكون من رقمين فقط بسبب طبيعة الدوائر الإلكترونية (كهرباء مشغّلة/متوقفة):</p>
+            <ul>
+                <li><strong>1</strong> = <code class="code-text">ON</code> (تشغيل / وجود إشارة)</li>
+                <li><strong>0</strong> = <code class="code-text">OFF</code> (إيقاف / انقطاع إشارة)</li>
+            </ul>
+
+            <h3>🔄 ما هو الـ Compiler (المترجم)؟</h3>
+            <p>برنامج وسيط يحول الكود الذي نكتبه بلغة Python إلى لغة الآلة (0 و 1) ليفهمها المعالج وينفذ الأوامر.</p>
+            
+            <div class="code-block">
+<span class="code-comment">‍💻 المبرمج </span> <span class="code-func">Python Code</span> <span class="code-comment"></span> <span class="code-keyword">Compiler/Interpreter</span> <span class="code-comment">➜</span> <span class="code-string">Binary (0 & 1)</span> <span class="code-comment">➜  التنفيذ</span>
+            </div>
+        </section>
+
+        <!-- Section 4: Break & Review -->
+        <section id="section4">
+            <div class="section-header">
+                <div class="section-num">☕</div>
+                <div class="section-title">استراحة تفاعلية + مراجعة سريعة</div>
+                <div class="section-time">⏱ 5 دقايق</div>
             </div>
             <div class="info-box">
-                <strong>print()</strong> دالة تعرض النص على الشاشة
+                🤔 <strong>سؤال للمراجعة الذاتية:</strong> لماذا لا يمكننا كتابة أوامر للكمبيوتر بالعربية مباشرة دون مترجم أو بيئة تشغيل؟
             </div>
-        </div>
-        <div class="practice-box">
-            <div class="practice-title">✏️ تمرين فوري</div>
-            اكتب برنامج يعرض اسمك، عمرك، ومدينتك في 3 أسطر منفصلة
-        </div>
+            <ul>
+                <li>✅ لأن المعالج مصمم كهربائياً لاستقبال إشارات <code class="code-text">High/Low</code> فقط.</li>
+                <li>✅ المترجم هو الجسر الذي يترجم منطقنا البشري إلى نبضات كهربائية.</li>
+            </ul>
+            <p>خذ دقيقة راحة، جهّز بيئة العمل (VS Code أو Replit أو أي محرر Python)، واستعد للجزء العملي.</p>
+        </section>
+
+        <!-- Section 5: .py Extension & print() -->
+        <section id="section5">
+            <div class="section-header">
+                <div class="section-num">٠٤</div>
+                <div class="section-title">امتداد الملفات + أول أمر print()</div>
+                <div class="section-time">⏱ 12 دقيقة</div>
+            </div>
+            
+            <h3>📁 امتداد ملفات Python</h3>
+            <p>أي ملف مكتوب بلغة Python يجب أن ينتهي بالامتداد التالي:</p>
+            <div class="code-block">.py</div>
+            <p>أمثلة صحيحة: <code class="code-text">main.py</code> | <code class="code-text">calculator.py</code> | <code class="code-text">data_processor.py</code></p>
+
+            <h3>▶️ أول أمر في Python: <code class="code-text">print()</code></h3>
+            <p>يستخدم لطباعة أي بيانات (نصوص، أرقام، نتائج عمليات) على الشاشة أو وحدة التحكم (Console).</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>الكود</th><th>الوصف</th><th>الناتج</th></tr></thead>
+                    <tbody>
+                        <tr><td><code class="code-text">print("Hello")</code></td><td>طباعة نص</td><td>Hello</td></tr>
+                        <tr><td><code class="code-text">print(20)</code></td><td>طباعة رقم</td><td>20</td></tr>
+                        <tr><td><code class="code-text">print("My age is", 20)</code></td><td>نص + رقم</td><td>My age is 20</td></tr>
+                        <tr><td><code class="code-text">print("Ahmed")<br>print("Python")</code></td><td>سطرين منفصلين</td><td>Ahmed<br>Python</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 6: Components & Notes -->
+        <section id="section6">
+            <div class="section-header">
+                <div class="section-num">٠٥</div>
+                <div class="section-title">مكونات أمر print() + ملاحظات تشغيل</div>
+                <div class="section-time">⏱ 8 دقايق</div>
+            </div>
+            
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>الجزء</th><th>الاسم بالعربي</th><th>الاسم بالإنجليزي</th><th>مثال</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code class="code-text">print</code></td><td>أمر الطباعة</td><td>Print Function</td><td><code class="code-text">print</code></td></tr>
+                        <tr><td><code class="code-text">( )</code></td><td>قوسان</td><td>Parentheses</td><td><code class="code-text">()</code></td></tr>
+                        <tr><td><code class="code-text">" "</code></td><td>علامتا تنصيص مزدوجة</td><td>Double Quotation</td><td><code class="code-text">"Hello"</code></td></tr>
+                        <tr><td><code class="code-text">' '</code></td><td>علامتا تنصيص مفردة</td><td>Single Quotation</td><td><code class="code-text">'Hello'</code></td></tr>
+                        <tr><td><code class="code-text">,</code></td><td>فاصلة</td><td>Comma</td><td><code class="code-text">print("Age", 20)</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="warning-box">
+                 <strong>ملاحظات تشغيل هامة:</strong>
+                <ul style="margin-top:15px;">
+                    <li>✅ كلمة <code class="code-text">print</code> تكتب بحروف صغيرة فقط (Case Sensitive).</li>
+                    <li>✅ النصوص <strong>يجب</strong> أن تكون بين علامتي تنصيص <code class="code-text">" "</code> أو <code class="code-text">' '</code>.</li>
+                    <li>✅ الأرقام تُكتب بدون تنصيص لكي يتعامل معها الكمبيوتر كقيمة عددية.</li>
+                    <li>▶️ بعد كتابة الكود، اضغط <strong>Run</strong> لتنفيذ البرنامج وعرض النتيجة.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 7: Homework, Terms, Closing -->
+        <section id="section7">
+            <div class="section-header">
+                <div class="section-num">٠</div>
+                <div class="section-title">الواجب + مصطلحات المحاضرة + الختام</div>
+                <div class="section-time">⏱ 5 دقايق</div>
+            </div>
+            
+            <h3>🏠 واجب المحاضرة</h3>
+            <p>اكتب برنامج Python يقوم بطباعة الآتي (كل أمر في سطر منفصل):</p>
+            <ol style="padding-right: 25px; margin-bottom: 20px;">
+                <li>اسمك الكامل.</li>
+                <li>عمرك.</li>
+                <li>مدينتك أو جامعتك.</li>
+                <li>الجملة: <code class="code-text">I love Python</code></li>
+                <li>الجملة: <code class="code-text">My age is 20</code> (استخدم فاصلة للفصل بين النص والرقم).</li>
+            </ol>
+            <div class="success-box">💡 <strong>تسليم الواجب:</strong> احفظ الملف باسم <code class="code-text">homework1_yourname.py</code> وارفعه على منصة الكورس أو أرسله عبر الواتساب قبل المحاضرة الثانية.</div>
+
+            <h3>📖 مصطلحات المحاضرة (Key Terms)</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>English</th><th>العربي</th><th>الوظيفة</th></tr></thead>
+                    <tbody>
+                        <tr><td>Programming</td><td>البرمجة</td><td>كتابة أوامر منطقية للكمبيوتر</td></tr>
+                        <tr><td>Compiler / Interpreter</td><td>المترجم / المفسر</td><td>يحول الكود إلى لغة الآلة (0 و1)</td></tr>
+                        <tr><td>Binary Language</td><td>لغة الآلة</td><td>نظام العد الثنائي (0, 1)</td></tr>
+                        <tr><td>Extension (.py)</td><td>امتداد الملف</td><td>يحدد أن الملف مكتوب بلغة Python</td></tr>
+                        <tr><td>Print Function</td><td>أمر الطباعة</td><td>عرض البيانات على الشاشة</td></tr>
+                        <tr><td>Parentheses / Quotes</td><td>أقواس / علامات تنصيص</td><td>تغليف المعاملات والنصوص بشكل صحيح</td></tr>
+                        <tr><td>Run</td><td>تشغيل</td><td>تنفيذ الكود وعرض الناتج</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="info-box" style="margin-top: 25px;">
+                🚀 <strong>ماذا سنغطي في المحاضرة الثانية؟</strong><br>
+                المتغيرات (Variables)، أنواع البيانات (Strings, Integers, Floats)، ودمجها مع <code class="code-text">input()</code> لبناء تفاعل حقيقي مع المستخدم.
+            </div>
+        </section>
+
     </div>
 
-    <!-- SLIDE 7: Variables -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">📦</div>
-            <h2>المتغيرات (Variables)</h2>
-            <span class="slide-num">7 / 14</span>
-        </div>
-        <div class="highlight-box">
-            💡 المتغير = صندوق نضع فيه قيمة ونعطيه اسماً للوصول إليها لاحقاً
-        </div>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="code-filename">variables.py</span>
-            </div>
-            <div class="code-content">
-                <div class="code-line"><span class="line-num">1</span><span class="line-code comment"># متغيرات نصية (String)</span></div>
-                <div class="code-line"><span class="line-num">2</span><span class="line-code"><span class="var">name</span> = <span class="string">"أحمد"</span></span></div>
-                <div class="code-line"><span class="line-num">3</span><span class="line-code"><span class="var">city</span> = <span class="string">"القاهرة"</span></span></div>
-                <div class="code-line"><span class="line-num">4</span><span class="line-code"></span></div>
-                <div class="code-line"><span class="line-num">5</span><span class="line-code comment"># متغيرات رقمية صحيحة (Integer)</span></div>
-                <div class="code-line"><span class="line-num">6</span><span class="line-code"><span class="var">age</span> = <span class="num">25</span></span></div>
-                <div class="code-line"><span class="line-num">7</span><span class="line-code"></span></div>
-                <div class="code-line"><span class="line-num">8</span><span class="line-code comment"># متغيرات رقمية عشرية (Float)</span></div>
-                <div class="code-line"><span class="line-num">9</span><span class="line-code"><span class="var">height</span> = <span class="num">175.5</span></span></div>
-                <div class="code-line"><span class="line-num">10</span><span class="line-code"></span></div>
-                <div class="code-line"><span class="line-num">11</span><span class="line-code comment"># متغيرات منطقية (Boolean)</span></div>
-                <div class="code-line"><span class="line-num">12</span><span class="line-code"><span class="var">is_student</span> = <span class="keyword">True</span></span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 8: Data Types Table -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">📊</div>
-            <h2>أنواع البيانات الأساسية</h2>
-            <span class="slide-num">8 / 14</span>
-        </div>
-        <table class="styled-table">
-            <tr>
-                <th>النوع</th>
-                <th>بالإنجليزية</th>
-                <th>مثال</th>
-                <th>الاستخدام</th>
-            </tr>
-            <tr>
-                <td><span class="type-tag tag-str">نص</span></td>
-                <td>String (str)</td>
-                <td>"Python"</td>
-                <td>الأسماء، الجمل</td>
-            </tr>
-            <tr>
-                <td><span class="type-tag tag-int">عدد صحيح</span></td>
-                <td>Integer (int)</td>
-                <td>25</td>
-                <td>العمر، العدد</td>
-            </tr>
-            <tr>
-                <td><span class="type-tag tag-float">عدد عشري</span></td>
-                <td>Float</td>
-                <td>3.14</td>
-                <td>الأسعار، القياسات</td>
-            </tr>
-            <tr>
-                <td><span class="type-tag tag-bool">منطقي</span></td>
-                <td>Boolean</td>
-                <td>True / False</td>
-                <td>نعم / لا</td>
-            </tr>
-        </table>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="code-filename">types.py</span>
-            </div>
-            <div class="code-content">
-                <div class="code-line"><span class="line-num">1</span><span class="line-code comment"># كيف نعرف نوع المتغير؟</span></div>
-                <div class="code-line"><span class="line-num">2</span><span class="line-code"><span class="func">print</span>(<span class="func">type</span>(name))</span></div>
-                <div class="code-line"><span class="line-num">3</span><span class="line-code"><span class="func">print</span>(<span class="func">type</span>(age))</span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 9: Advanced print() -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">🖨️</div>
-            <h2>دالة print() الاحترافية</h2>
-            <span class="slide-num">9 / 14</span>
-        </div>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="code-filename">print_advanced.py</span>
-            </div>
-            <div class="code-content">
-                <div class="code-line"><span class="line-num">1</span><span class="line-code comment"># 1. دمج النصوص مع المتغيرات</span></div>
-                <div class="code-line"><span class="line-num">2</span><span class="line-code"><span class="var">name</span> = <span class="string">"خالد"</span></span></div>
-                <div class="code-line"><span class="line-num">3</span><span class="line-code"><span class="func">print</span>(<span class="string">f"مرحباً {name}"</span>)</span></div>
-                <div class="code-line"><span class="line-num">4</span><span class="line-code"></span></div>
-                <div class="code-line"><span class="line-num">5</span><span class="line-code comment"># 2. الطباعة بدون سطر جديد</span></div>
-                <div class="code-line"><span class="line-num">6</span><span class="line-code"><span class="func">print</span>(<span class="string">"مرحباً"</span>, end=<span class="string">" "</span>)</span></div>
-                <div class="code-line"><span class="line-num">7</span><span class="line-code"><span class="func">print</span>(<span class="string">"بك"</span>)</span></div>
-                <div class="code-line"><span class="line-num">8</span><span class="line-code"></span></div>
-                <div class="code-line"><span class="line-num">9</span><span class="line-code comment"># 3. الفصل بفاصل مخصص</span></div>
-                <div class="code-line"><span class="line-num">10</span><span class="line-code"><span class="func">print</span>(<span class="string">"Py"</span>, <span class="string">"سهلة"</span>, sep=<span class="string">" - "</span>)</span></div>
-            </div>
-        </div>
-        <div class="highlight-box">
-            💡 ركّز جيداً على f-strings، فهي الطريقة الاحترافية التي ستستخدمها طوال الكورس!
-        </div>
-    </div>
-
-    <!-- SLIDE 10: Mini Project -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">🎓</div>
-            <h2>مشروع تطبيقي: بطاقة تعريف</h2>
-            <span class="slide-num">10 / 14</span>
-        </div>
-        <div class="code-block">
-            <div class="code-header">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-                <span class="code-filename">id_card.py</span>
-            </div>
-            <div class="code-content">
-                <div class="code-line"><span class="line-num">1</span><span class="line-code"><span class="var">full_name</span> = <span class="string">"عمر محمد أحمد"</span></span></div>
-                <div class="code-line"><span class="line-num">2</span><span class="line-code"><span class="var">age</span> = <span class="num">28</span></span></div>
-                <div class="code-line"><span class="line-num">3</span><span class="line-code"><span class="var">profession</span> = <span class="string">"مطور برمجيات"</span></span></div>
-                <div class="code-line"><span class="line-num">4</span><span class="line-code"><span class="var">is_available</span> = <span class="keyword">True</span></span></div>
-                <div class="code-line"><span class="line-num">5</span><span class="line-code"></span></div>
-                <div class="code-line"><span class="line-num">6</span><span class="line-code"><span class="func">print</span>(<span class="string">"="</span> * <span class="num">30</span>)</span></div>
-                <div class="code-line"><span class="line-num">7</span><span class="line-code"><span class="func">print</span>(<span class="string">f"الاسم: {full_name}"</span>)</span></div>
-                <div class="code-line"><span class="line-num">8</span><span class="line-code"><span class="func">print</span>(<span class="string">f"العمر: {age} سنة"</span>)</span></div>
-                <div class="code-line"><span class="line-num">9</span><span class="line-code"><span class="func">print</span>(<span class="string">f"المهنة: {profession}"</span>)</span></div>
-                <div class="code-line"><span class="line-num">10</span><span class="line-code"><span class="func">print</span>(<span class="string">"="</span> * <span class="num">30</span>)</span></div>
-            </div>
-        </div>
-        <p class="content-text"><strong>الناتج المتوقع:</strong></p>
-        <div class="terminal">
-            ==============================<br>
-            الاسم: عمر محمد أحمد<br>
-            العمر: 28 سنة<br>
-            المهنة: مطور برمجيات<br>
-            ==============================
-        </div>
-    </div>
-
-    <!-- SLIDE 11: Summary -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">📌</div>
-            <h2>ملخص المحاضرة</h2>
-            <span class="slide-num">11 / 14</span>
-        </div>
-        <ul class="objectives-list">
-            <li><span class="check-icon">✓</span> تعلمنا تثبيت Python وبيئة العمل من الصفر</li>
-            <li><span class="check-icon">✓</span> كتبنا أول برنامج Python حقيقي بأيدينا</li>
-            <li><span class="check-icon">✓</span> فهمنا المتغيرات وأنواع البيانات الأربعة</li>
-            <li><span class="check-icon">✓</span> أتقنّا دالة print() بكل تقنياتها الاحترافية</li>
-            <li><span class="check-icon">✓</span> طبّقنا مشروعاً متكاملاً: بطاقة تعريف شخصية</li>
-        </ul>
-        <div class="info-box" style="margin-top: 20px; text-align:center; font-size: 17px;">
-            🎉 مبروك! أنت الآن كتبت أول أكواد Python في حياتك
-        </div>
-    </div>
-
-    <!-- SLIDE 12: Homework -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">📝</div>
-            <h2>الواجب المنزلي</h2>
-            <span class="slide-num">12 / 14</span>
-        </div>
-        <div class="homework-item">
-            <span class="hw-number">تمرين 1:</span>
-            <p style="margin-top:5px; color:#5c5142;">أنشئ برنامج "البطاقة الشخصية" الخاص بك بمعلوماتك الحقيقية</p>
-        </div>
-        <div class="homework-item">
-            <span class="hw-number">تمرين 2:</span>
-            <p style="margin-top:5px; color:#5c5142;">أنشئ متغيرات لكتابك المفضل (الاسم، السعر، عدد الصفحات، هل قرأته) واطبعها بـ f-strings</p>
-        </div>
-        <div class="homework-item" style="border-color:#c4a574;">
-            <span class="hw-number" style="color:#a3824e;">تحدي إضافي (اختياري):</span>
-            <div class="code-block" style="margin-top:10px;">
-                <div class="code-content">
-                    <div class="code-line"><span class="line-num">1</span><span class="line-code"><span class="var">x</span> = <span class="num">5</span></span></div>
-                    <div class="code-line"><span class="line-num">2</span><span class="line-code"><span class="var">y</span> = <span class="string">"5"</span></span></div>
-                    <div class="code-line"><span class="line-num">3</span><span class="line-code"><span class="func">print</span>(x + <span class="num">5</span>)</span></div>
-                    <div class="code-line"><span class="line-num">4</span><span class="line-code"><span class="func">print</span>(y + <span class="string">"5"</span>)</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 13: Next Lecture Teaser -->
-    <div class="slide">
-        <div class="slide-header">
-            <div class="slide-icon">🔜</div>
-            <h2>استعد للمحاضرة القادمة</h2>
-            <span class="slide-num">13 / 14</span>
-        </div>
-        <div class="highlight-box" style="font-size: 17px; text-align:center; padding: 28px;">
-            🧠 في المحاضرة القادمة، سنتعلم كيف نجعل برامجنا "تفكر" وتتخذ قرارات باستخدام الجمل الشرطية (If-Else)
-        </div>
-        <p class="content-text" style="text-align:center; font-size: 17px; margin-top:20px;">
-            استعدوا لتحويل بطاقتكم الشخصية إلى برنامج ذكي يتخذ قرارات! 🚀
-        </p>
-    </div>
-
-    <!-- SLIDE 14: Thank You -->
-    <div class="slide title-slide">
-        <div class="python-logo">🎉</div>
-        <h1>أحسنت! أنهيت المحاضرة الأولى</h1>
-        <p class="subtitle">راجع السلايدات، طبّق الواجب، ونراك في المحاضرة القادمة</p>
-        <div class="badge-row">
-            <span class="badge">💬 شارك أسئلتك في المجموعة</span>
-            <span class="badge">📤 ارفع حل الواجب</span>
-        </div>
-    </div>
-
-</div>
-
-<div class="nav-controls">
-    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">◀ السابق</button>
-    <span class="slide-counter" id="slideCounter">1 / 14</span>
-    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">التالي ▶</button>
-</div>
-
-<div class="keyboard-hint">⌨️ استخدم الأسهم للتنقل</div>
-
-<script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
-
-    function showSlide(index) {
-        slides.forEach(s => s.classList.remove('active'));
-        slides[index].classList.add('active');
-        document.getElementById('slideCounter').innerText = `${index + 1} / ${totalSlides}`;
-        document.getElementById('progressBar').style.width = `${((index + 1) / totalSlides) * 100}%`;
-        document.getElementById('prevBtn').disabled = index === 0;
-        document.getElementById('nextBtn').disabled = index === totalSlides - 1;
-        slides[index].scrollTop = 0;
-    }
-
-    function changeSlide(direction) {
-        currentSlide += direction;
-        if (currentSlide < 0) currentSlide = 0;
-        if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
-        showSlide(currentSlide);
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') changeSlide(1);
-        if (e.key === 'ArrowRight') changeSlide(-1);
-    });
-
-    showSlide(0);
-</script>
+    <footer>
+        <div class="brand">Sunshine T Academy</div>
+        <p>📞 01080680930 | 📧 <a href="mailto:info@sunshinetacademy.com">info@sunshinetacademy.com</a> | 💬 WhatsApp Support</p>
+        <p style="margin-top:15px; opacity:0.7;">© 2025 Sunshine T Academy · جميع الحقوق محفوظة · AI & Automation for Professionals · Lecture 01 / 06 · م. أحمد</p>
+    </footer>
 
 </body>
 </html>
